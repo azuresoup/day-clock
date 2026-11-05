@@ -63,19 +63,29 @@
     const d = new Date();
     const now = d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
     const visible = events.filter((e) => !off.has(e.id));
-    const upcoming = visible.filter((e) => e.minutes > now).sort((a, b) => a.minutes - b.minutes);
+    const byTime = [...visible].sort((a, b) => a.minutes - b.minutes);
 
     let s = drawFace();
 
-    // Дуги от текущего времени до каждого будущего события, у каждого своя дорожка:
-    // ближайшее снаружи, дальше — ближе к центру. Дорожки ужимаются, если событий много.
+    // У каждого события своя дорожка: раньше по времени — ближе к краю.
+    // Будущее событие: дуга от «сейчас» до него.
+    // Прошедшее: бледная дуга от события до «сейчас» в красной обводке — это просрочка.
     const OUTER = 77, INNER = 59;
-    const step = upcoming.length > 1 ? Math.min(6, (OUTER - INNER) / (upcoming.length - 1)) : 0;
-    const width = Math.max(2, Math.min(4.5, step * 0.75 || 4.5));
-    upcoming.forEach((e, i) => {
-      const from = angle(now);
-      const to = from + Math.min((e.minutes - now) / 2, 359.9);
-      s += `<path d="${arc(OUTER - i * step, from, to)}" fill="none" stroke="${e.color}" stroke-width="${width}" stroke-linecap="round" opacity="0.7"/>`;
+    const step = byTime.length > 1 ? Math.min(6, (OUTER - INNER) / (byTime.length - 1)) : 0;
+    const width = Math.max(2, Math.min(4, step * 0.6 || 4));
+    byTime.forEach((e, i) => {
+      const r = OUTER - i * step;
+      const left = e.minutes - now;
+      if (left > 0) {
+        const from = angle(now);
+        s += `<path d="${arc(r, from, from + Math.min(left / 2, 359.9))}" fill="none" stroke="${e.color}" stroke-width="${width}" stroke-linecap="round" opacity="0.7"/>`;
+      } else {
+        const from = angle(e.minutes);
+        const d = arc(r, from, from + Math.max(Math.min(-left / 2, 359.9), 0.5));
+        s += `<path d="${d}" fill="none" stroke="${theme.overdueOutline}" stroke-width="${width + 1.6}" stroke-linecap="round"/>`;
+        s += `<path d="${d}" fill="none" stroke="${theme.face}" stroke-width="${width}" stroke-linecap="round"/>`;
+        s += `<path d="${d}" fill="none" stroke="${e.color}" stroke-width="${width}" stroke-linecap="round" opacity="0.45"/>`;
+      }
     });
 
     s += `<circle cx="100" cy="100" r="55" fill="${theme.face}"/>`;
@@ -85,7 +95,8 @@
 
     for (const e of visible) {
       const [x, y] = point(94, angle(e.minutes));
-      s += `<circle cx="${x}" cy="${y}" r="7" fill="${e.color}" stroke="${theme.face}" stroke-width="2"><title>${e.name} ${e.time}</title></circle>`;
+      const past = e.minutes <= now;
+      s += `<circle cx="${x}" cy="${y}" r="7" fill="${e.color}" stroke="${theme.face}" stroke-width="2"${past ? ' opacity="0.35"' : ""}><title>${e.name} ${e.time}</title></circle>`;
     }
 
     const [x0, y0] = point(56, angle(now));
