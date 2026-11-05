@@ -90,7 +90,7 @@
 
     s += `<circle cx="100" cy="100" r="55" fill="${theme.face}"/>`;
     if (mascotSrc) {
-      s += `<image href="${mascotSrc}" x="58" y="58" width="84" height="84" preserveAspectRatio="xMidYMid meet"/>`;
+      s += `<image href="${mascotSrc}" x="66" y="66" width="68" height="68" preserveAspectRatio="xMidYMid meet"/>`;
     }
 
     for (const e of visible) {
@@ -110,7 +110,7 @@
       const isOff = off.has(e.id);
       const left = e.minutes - now;
       const btn = document.createElement("button");
-      btn.className = "event" + (isOff ? " off" : "");
+      btn.className = "event" + (isOff ? " off" : left < 0 ? " overdue" : "");
       btn.title = e.time;
       btn.innerHTML =
         `<span class="name"><span class="dot" style="background:${isOff ? theme.tick : e.color}"></span>${e.name}</span>` +

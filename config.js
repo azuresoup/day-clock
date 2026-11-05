@@ -7,10 +7,10 @@ window.DAY_CLOCK_CONFIG = {
   // События. id — любое уникальное слово (по нему запоминается, выключено ли событие).
   // time — "ЧЧ:ММ", color — любой CSS-цвет.
   events: [
-    { id: "lunch",  name: "обед",   time: "12:30", color: "#F0997B" },
-    { id: "work",   name: "работа", time: "17:00", color: "#D4537E" },
-    { id: "dinner", name: "ужин",   time: "18:30", color: "#7F77DD" },
-    { id: "sleep",  name: "сон",    time: "20:50", color: "#993556" },
+    { id: "lunch",  name: "обед",   time: "12:30", color: "#F7B6C8" },
+    { id: "work",   name: "работа", time: "17:00", color: "#EC7FA3" },
+    { id: "dinner", name: "ужин",   time: "18:30", color: "#C94F7C" },
+    { id: "sleep",  name: "сон",    time: "20:50", color: "#7A2550" },
   ],
 
   // Цвета интерфейса.
@@ -20,7 +20,7 @@ window.DAY_CLOCK_CONFIG = {
     rim: "#ED93B1",        // обод и крупные деления
     tick: "#F4C0D1",       // мелкие деления и выключенные кнопки
     text: "#72243E",       // текст и указатель текущего времени
-    overdue: "#D4537E",    // время, которое уже прошло («+0:40»)
+    overdue: "#E24B4A",    // просрочка: обводка кнопки и время «+0:40»
     overdueMask: "#E24B4A",    // красная маска поверх дуги просрочки
     overdueMaskOpacity: 0.45,  // её прозрачность: 0 — не видно, 1 — сплошная
   },
