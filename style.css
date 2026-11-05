@@ -1,0 +1,71 @@
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--background);
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, sans-serif;
+  user-select: none;
+}
+
+.widget {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 16px;
+}
+
+/* Циферблат занимает всё место, что осталось над кнопками */
+.dial {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.dial svg {
+  height: 100%;
+  max-width: 100%;
+  aspect-ratio: 1;
+}
+
+.events {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  width: 100%;
+  max-width: 320px;
+  flex: 0 0 auto;
+}
+
+.event {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--face);
+  background: var(--face);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.event.off {
+  background: transparent;
+  border-color: var(--tick);
+  color: var(--rim);
+}
+
+.event .name { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.event .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.event .left { font-weight: 600; font-variant-numeric: tabular-nums; }
+.event .left.overdue { color: var(--overdue); }
