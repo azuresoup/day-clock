@@ -68,7 +68,7 @@
 
   function render() {
     const d = new Date();
-    const now = d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
+    const now = debugNow ?? d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
     const visible = events.filter((e) => !off.has(e.id));
 
     let s = drawFace();
@@ -128,6 +128,24 @@
       btn.onclick = () => toggle(e.id);
       list.appendChild(btn);
     }
+  }
+
+  // Режим отладки: index.html?debug — под кнопками ползунок, который подменяет текущее время.
+  let debugNow = null;
+  if (new URLSearchParams(location.search).has("debug")) {
+    const hhmm = (m) => String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+    const d = new Date();
+    debugNow = d.getHours() * 60 + d.getMinutes();
+    const row = document.createElement("div");
+    row.className = "debug";
+    row.innerHTML = `<input type="range" min="0" max="1439" step="5" value="${debugNow}"><span>${hhmm(debugNow)}</span>`;
+    const [slider, label] = row.children;
+    slider.oninput = () => {
+      debugNow = +slider.value;
+      label.textContent = hhmm(debugNow);
+      render();
+    };
+    document.querySelector(".widget").appendChild(row);
   }
 
   render();

@@ -71,3 +71,6 @@ html, body {
 .event .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
 .event .left { font-weight: 600; font-variant-numeric: tabular-nums; }
 .event .left.overdue { color: var(--overdue); }
+
+.debug { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 320px; font-size: 13px; font-variant-numeric: tabular-nums; }
+.debug input { flex: 1; accent-color: var(--rim); }
