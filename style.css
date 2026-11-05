@@ -74,3 +74,5 @@ html, body {
 
 .debug { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 320px; font-size: 13px; font-variant-numeric: tabular-nums; }
 .debug input { flex: 1; accent-color: var(--rim); }
+
+.now { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; flex: none; }
