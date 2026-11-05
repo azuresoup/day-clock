@@ -4,16 +4,19 @@ window.DAY_CLOCK_CONFIG = {
   // берётся она (этот файл не попадает в git — кладите туда своего маскота).
   mascot: "mascot.png",
 
+  // Название окна.
+  title: "Chiikawa clock",
+
   // События. id — любое уникальное слово (по нему запоминается, выключено ли событие).
   // time — "ЧЧ:ММ", color — любой CSS-цвет.
   // lane — дорожка дуги. События с одинаковым lane идут на одной дорожке друг за другом.
   // Дорожки идут от края к центру в том порядке, в каком впервые встречаются ниже.
   // Кнопки идут в том же порядке, по две в ряд.
   events: [
-    { id: "work",   name: "работа", time: "17:00", color: "#EC7FA3", lane: "day" },
-    { id: "sleep",  name: "сон",    time: "20:50", color: "#7A2550", lane: "day" },
-    { id: "lunch",  name: "обед",   time: "12:30", color: "#F7B6C8", lane: "food" },
-    { id: "dinner", name: "ужин",   time: "18:30", color: "#C94F7C", lane: "food" },
+    { id: "work",   name: "work",   time: "17:00", color: "#EC7FA3", lane: "day" },
+    { id: "sleep",  name: "sleep",  time: "20:50", color: "#7A2550", lane: "day" },
+    { id: "lunch",  name: "lunch",  time: "12:30", color: "#F7B6C8", lane: "food" },
+    { id: "dinner", name: "dinner", time: "18:30", color: "#C94F7C", lane: "food" },
   ],
 
   // Цвета интерфейса.

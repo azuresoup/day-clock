@@ -8,6 +8,7 @@
     document.documentElement.style.setProperty("--" + key, value);
   }
   const theme = config.theme;
+  if (config.title) document.title = config.title;
   // Цвет заголовка окна в режиме приложения (start.cmd) — под цвет фона.
   document.querySelector('meta[name="theme-color"]').content = theme.background;
 
@@ -123,7 +124,7 @@
       btn.title = e.time;
       btn.innerHTML =
         `<span class="name"><span class="dot" style="background:${isOff ? theme.tick : e.color}"></span>${e.name}</span>` +
-        `<span class="left${!isOff && left < 0 ? " overdue" : ""}">${isOff ? "выкл" : (left < 0 ? "+" : "") + duration(left)}</span>`;
+        `<span class="left${!isOff && left < 0 ? " overdue" : ""}">${isOff ? "off" : (left < 0 ? "+" : "") + duration(left)}</span>`;
       btn.onclick = () => toggle(e.id);
       list.appendChild(btn);
     }
