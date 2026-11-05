@@ -24,6 +24,10 @@
     return { ...e, minutes: h * 60 + m };
   });
 
+  // Дорожки по порядку из конфига: первая — у края. Без lane у события своя дорожка.
+  const laneOf = (e) => e.lane ?? e.id;
+  const lanes = [...new Set(events.map(laneOf))];
+
   // Выключенные события хранятся в localStorage, чтобы пережить перезапуск.
   const off = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
   const toggle = (id) => {
@@ -63,29 +67,32 @@
     const d = new Date();
     const now = d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
     const visible = events.filter((e) => !off.has(e.id));
-    const byTime = [...visible].sort((a, b) => a.minutes - b.minutes);
 
     let s = drawFace();
 
-    // У каждого события своя дорожка: раньше по времени — ближе к краю.
-    // Будущее событие: дуга от «сейчас» до него.
-    // Прошедшее: дуга от события до «сейчас» под полупрозрачной красной маской — это просрочка.
-    const OUTER = 77, INNER = 59;
-    const step = byTime.length > 1 ? Math.min(6, (OUTER - INNER) / (byTime.length - 1)) : 0;
-    const width = Math.max(2, Math.min(4, step * 0.6 || 4));
-    byTime.forEach((e, i) => {
-      const r = OUTER - i * step;
-      const left = e.minutes - now;
-      if (left > 0) {
-        const from = angle(now);
-        s += `<path d="${arc(r, from, from + Math.min(left / 2, 359.9))}" fill="none" stroke="${e.color}" stroke-width="${width}" stroke-linecap="round" opacity="0.7"/>`;
-      } else {
-        // Ровные концы, чтобы дуга начиналась точно у точки события, а не чуть раньше.
-        const from = angle(e.minutes);
-        const d = arc(r, from, from + Math.max(Math.min(-left / 2, 359.9), 0.5));
-        s += `<path d="${d}" fill="none" stroke="${e.color}" stroke-width="${width}" opacity="0.7"/>`;
-        s += `<path d="${d}" fill="none" stroke="${theme.overdueMask}" stroke-width="${width}" opacity="${theme.overdueMaskOpacity}"/>`;
-      }
+    // Дорожки берутся из конфига (поле lane) и не зависят от выключенных событий,
+    // поэтому ничего не прыгает. События на одной дорожке идут друг за другом:
+    // дуга следующего начинается там, где кончается предыдущее.
+    // Будущее событие: дуга от «сейчас» (или от предыдущего события) до него.
+    // Прошедшее: дуга от события до «сейчас» (но не дальше следующего) под красной маской.
+    const OUTER = 76, STEP = 8, WIDTH = 5;
+    lanes.forEach((lane, i) => {
+      const r = OUTER - i * STEP;
+      const onLane = visible.filter((e) => laneOf(e) === lane).sort((a, b) => a.minutes - b.minutes);
+      onLane.forEach((e, k) => {
+        const prev = onLane[k - 1], next = onLane[k + 1];
+        if (e.minutes > now) {
+          const start = Math.max(now, prev ? prev.minutes : -Infinity);
+          const from = angle(start);
+          s += `<path d="${arc(r, from, from + Math.min((e.minutes - start) / 2, 359.9))}" fill="none" stroke="${e.color}" stroke-width="${WIDTH}" opacity="0.7"/>`;
+        } else {
+          const end = Math.min(now, next ? next.minutes : Infinity);
+          const from = angle(e.minutes);
+          const d = arc(r, from, from + Math.max(Math.min((end - e.minutes) / 2, 359.9), 0.5));
+          s += `<path d="${d}" fill="none" stroke="${e.color}" stroke-width="${WIDTH}" opacity="0.7"/>`;
+          s += `<path d="${d}" fill="none" stroke="${theme.overdueMask}" stroke-width="${WIDTH}" opacity="${theme.overdueMaskOpacity}"/>`;
+        }
+      });
     });
 
     s += `<circle cx="100" cy="100" r="55" fill="${theme.face}"/>`;
