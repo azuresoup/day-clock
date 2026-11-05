@@ -8,6 +8,8 @@
     document.documentElement.style.setProperty("--" + key, value);
   }
   const theme = config.theme;
+  // Цвет заголовка окна в режиме приложения (start.cmd) — под цвет фона.
+  document.querySelector('meta[name="theme-color"]').content = theme.background;
 
   // Свой маскот из mascot.local.png, иначе картинка из конфига.
   let mascotSrc = "";
