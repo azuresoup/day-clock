@@ -125,7 +125,7 @@
     }
 
     const [x0, y0] = point(56, angle(now));
-    const [x1, y1] = point(77, angle(now));
+    const [x1, y1] = point(92, angle(now));
     s += `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="${theme.text}" stroke-width="4" stroke-linecap="round"/>`;
 
     svg.innerHTML = s;
