@@ -103,7 +103,7 @@
     for (const e of visible) {
       const [x, y] = point(94, angle(e.minutes));
       const past = e.minutes <= now;
-      s += `<circle cx="${x}" cy="${y}" r="7" fill="${e.color}" stroke="${theme.face}" stroke-width="2"${past ? ' opacity="0.35"' : ""}><title>${e.name} ${e.time}</title></circle>`;
+      s += `<circle cx="${x}" cy="${y}" r="7" fill="${e.color}" stroke="${past ? theme.overdue : theme.face}" stroke-width="${past ? 2.5 : 2}"><title>${e.name} ${e.time}</title></circle>`;
     }
 
     const [x0, y0] = point(56, angle(now));
