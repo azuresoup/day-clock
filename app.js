@@ -63,29 +63,32 @@
     const d = new Date();
     const now = d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
     const visible = events.filter((e) => !off.has(e.id));
-    const next = visible.filter((e) => e.minutes > now).sort((a, b) => a.minutes - b.minutes)[0];
+    const upcoming = visible.filter((e) => e.minutes > now).sort((a, b) => a.minutes - b.minutes);
 
     let s = drawFace();
 
-    // Дуга от текущего времени до ближайшего события (не больше полного круга).
-    if (next) {
+    // Дуги от текущего времени до каждого будущего события, у каждого своя дорожка:
+    // ближайшее снаружи, дальше — ближе к центру. Дорожки ужимаются, если событий много.
+    const OUTER = 77, INNER = 59;
+    const step = upcoming.length > 1 ? Math.min(6, (OUTER - INNER) / (upcoming.length - 1)) : 0;
+    const width = Math.max(2, Math.min(4.5, step * 0.75 || 4.5));
+    upcoming.forEach((e, i) => {
       const from = angle(now);
-      const to = from + Math.min((next.minutes - now) / 2, 359.9);
-      s += `<path d="${arc(76, from, to)}" fill="none" stroke="${next.color}" stroke-width="6" stroke-linecap="round" opacity="0.55"/>`;
-    }
+      const to = from + Math.min((e.minutes - now) / 2, 359.9);
+      s += `<path d="${arc(OUTER - i * step, from, to)}" fill="none" stroke="${e.color}" stroke-width="${width}" stroke-linecap="round" opacity="0.7"/>`;
+    });
 
-    s += `<circle cx="100" cy="100" r="58" fill="${theme.face}"/>`;
+    s += `<circle cx="100" cy="100" r="55" fill="${theme.face}"/>`;
     if (mascotSrc) {
-      s += `<image href="${mascotSrc}" x="54" y="54" width="92" height="92" preserveAspectRatio="xMidYMid meet"/>`;
+      s += `<image href="${mascotSrc}" x="58" y="58" width="84" height="84" preserveAspectRatio="xMidYMid meet"/>`;
     }
 
     for (const e of visible) {
       const [x, y] = point(94, angle(e.minutes));
-      const past = e.minutes <= now;
-      s += `<circle cx="${x}" cy="${y}" r="7" fill="${e.color}" stroke="${theme.face}" stroke-width="2"${past ? ' opacity="0.35"' : ""}><title>${e.name} ${e.time}</title></circle>`;
+      s += `<circle cx="${x}" cy="${y}" r="7" fill="${e.color}" stroke="${theme.face}" stroke-width="2"><title>${e.name} ${e.time}</title></circle>`;
     }
 
-    const [x0, y0] = point(62, angle(now));
+    const [x0, y0] = point(56, angle(now));
     const [x1, y1] = point(80, angle(now));
     s += `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="${theme.text}" stroke-width="4" stroke-linecap="round"/>`;
 
