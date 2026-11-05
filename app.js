@@ -69,7 +69,7 @@
 
     // У каждого события своя дорожка: раньше по времени — ближе к краю.
     // Будущее событие: дуга от «сейчас» до него.
-    // Прошедшее: бледная дуга от события до «сейчас» в красной обводке — это просрочка.
+    // Прошедшее: дуга от события до «сейчас» под полупрозрачной красной маской — это просрочка.
     const OUTER = 77, INNER = 59;
     const step = byTime.length > 1 ? Math.min(6, (OUTER - INNER) / (byTime.length - 1)) : 0;
     const width = Math.max(2, Math.min(4, step * 0.6 || 4));
@@ -80,11 +80,11 @@
         const from = angle(now);
         s += `<path d="${arc(r, from, from + Math.min(left / 2, 359.9))}" fill="none" stroke="${e.color}" stroke-width="${width}" stroke-linecap="round" opacity="0.7"/>`;
       } else {
+        // Ровные концы, чтобы дуга начиналась точно у точки события, а не чуть раньше.
         const from = angle(e.minutes);
         const d = arc(r, from, from + Math.max(Math.min(-left / 2, 359.9), 0.5));
-        s += `<path d="${d}" fill="none" stroke="${theme.overdueOutline}" stroke-width="${width + 1.6}" stroke-linecap="round"/>`;
-        s += `<path d="${d}" fill="none" stroke="${theme.face}" stroke-width="${width}" stroke-linecap="round"/>`;
-        s += `<path d="${d}" fill="none" stroke="${e.color}" stroke-width="${width}" stroke-linecap="round" opacity="0.45"/>`;
+        s += `<path d="${d}" fill="none" stroke="${e.color}" stroke-width="${width}" opacity="0.7"/>`;
+        s += `<path d="${d}" fill="none" stroke="${theme.overdueMask}" stroke-width="${width}" opacity="${theme.overdueMaskOpacity}"/>`;
       }
     });
 
